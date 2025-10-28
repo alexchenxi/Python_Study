@@ -39,7 +39,9 @@ for user in new_users:
 print("################################")
 
 # 5.11
-numbers = range(1, 10)
+# list列表和range序列是有区别的，range不可增删改，元素类型只能是整数，只可以遍历/长度，内存效率极高
+numbers = list(range(1, 10))
+print(numbers)
 for number in numbers:
     if number == 1:
         print(f"{number}st")
