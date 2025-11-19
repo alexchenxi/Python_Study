@@ -13,6 +13,7 @@
 #         print(f"Okay, we will add {prompt} to your pizza.")
 
 # 7.5
+# break退出循环，创建一个无线循环的条件，通过break结束
 # while True:
 #     age = input("Please tell me age of you, enter \"quit\" to quit: ")
 #     if age.lower() == "quit":
@@ -38,37 +39,46 @@
 #     print(f"Your age is {age} years old, and your price is: {price}.")
 
 # 7.6
+# 条件判断结束循环，满足某条件才会执行核心代码
+# print("🎬 电影院票价查询系统（输入 'quit' 退出）")
+# prompt = "Please input your age, press 'quit' to quit."
+# message = ""
+# while message != "quit":
+#     message = input(prompt)
+#     if message.lower() != "quit":
+#         try:
+#             age = int(message)
+#         except ValueError:
+#             print(f"❌ 错误：'{message}' 不是有效的年龄，请输入数字或 'quit' 退出。")
+#             continue
+#         price = ""
+#         if age < 3:
+#             price = "免费 🆓"
+#         elif 3 <= age < 12:
+#             price = "10 美元 💰"
+#         else:
+#             price = "15 美元 💰"
+#         print(f"Your age is {age} years old, and your ticket is ${price}")
+
+# active做为循环标志，False时停止循环
 print("🎬 电影院票价查询系统（输入 'quit' 退出）")
-age_input = ""
-
-while age_input.lower() != "quit":
-    # 询问用户年龄（每次循环都获取新输入）
-    age_input = input("\n请输入你的年龄（输入 'quit' 结束查询）：")
-
-    # 1. 先判断是否要退出（此时条件测试已能终止，但这里跳过后续逻辑）
-    if age_input.lower() == "quit":
-        print("感谢使用，祝你观影愉快！👋")
-        continue  # 跳过后续票价判断，直接进入下一次循环（条件测试会终止）
-
-    # 2. 容错：处理非数字输入
-    try:
-        age = int(age_input)
-    except ValueError:
-        print(f"❌ 错误：'{age_input}' 不是有效的年龄，请输入数字或 'quit' 退出。")
-        continue
-
-    # 3. 容错：处理负数年龄
-    if age < 0:
-        print("❌ 错误：年龄不能为负数，请输入有效的年龄！")
-        continue
-
-    # 4. 根据年龄判断票价
-    if age < 3:
-        price = "免费 🆓"
-    elif 3 <= age < 12:
-        price = "10 美元 💰"
+prompt = "Please input your age, press 'quit' to quit."
+active = True
+while active:
+    message = input(prompt)
+    if message.lower() == "quit":
+        active = False
     else:
-        price = "15 美元 💰"
-
-    # 输出结果
-    print(f"✅ 你的年龄是 {age} 岁，对应的票价为：{price}")
+        try:
+            age = int(message)
+        except ValueError:
+            print(f"❌ 错误：'{message}' 不是有效的年龄，请输入数字或 'quit' 退出。")
+            continue
+        price = ""
+        if age < 3:
+            price = "免费 🆓"
+        elif 3 <= age < 12:
+            price = "10 美元 💰"
+        else:
+            price = "15 美元 💰"
+        print(f"Your age is {age} years old, and your ticket is {price}")
