@@ -21,6 +21,7 @@ restaurant.open_resteraurant()
 
 print("################################")
 
+
 class User:
     def __init__(self, first_name, last_name, age):
         self.first_name = first_name
@@ -28,7 +29,9 @@ class User:
         self.age = age
 
     def describe_user(self):
-        print(f"{self.first_name.title()} {self.last_name.title()} is a {self.age} years old user.")
+        print(
+            f"{self.first_name.title()} {self.last_name.title()} is a {self.age} years old user."
+        )
 
     def greet_user(self):
         print(f"Hello {self.first_name.title()}!")
