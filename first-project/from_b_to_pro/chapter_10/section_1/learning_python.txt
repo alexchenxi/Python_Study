@@ -1,0 +1,5 @@
+In Python you can create function
+In Python you can create class and instance
+In Python you can read files
+In Python you can calculate
+In Python you can ask questions
