@@ -7,6 +7,7 @@ class Settings:
         self.screen_width = 1280
         self.screen_height = 960
         self.bg_color = (135, 206, 235)
+        # self.bg_color = (255,255,255)
 
         # 飞船设置
         self.ship_speed = 1

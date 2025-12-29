@@ -12,7 +12,6 @@ class Ship:
         # 加载飞船图像并调整大小为80x64
         self.image = pygame.image.load(Path(__file__).parent / "images/ship.jpeg")
         self.image = pygame.transform.scale(self.image, (80, 64))  # 缩放图像
-        # self.image.rotate(-90)
         self.image = pygame.transform.rotate(self.image, -90)
         self.rect = self.image.get_rect()
         self.bg_color = ai_game.settings.bg_color
