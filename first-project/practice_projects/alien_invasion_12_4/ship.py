@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pygame
 
 
@@ -9,7 +11,8 @@ class Ship:
         self.screen_rect = ai_game.screen.get_rect()
 
         # 加载飞船图像并调整大小为80x64
-        self.image = pygame.image.load("images/ship.jpeg")
+
+        self.image = pygame.image.load(Path(__file__).parent / "images/ship.jpeg")
         self.image = pygame.transform.scale(self.image, (80, 64))  # 缩放图像
         self.rect = self.image.get_rect()
         self.bg_color = ai_game.settings.bg_color
@@ -18,10 +21,13 @@ class Ship:
 
         # 在飞船的属性 x 中存储一个浮点数
         self.x = float(self.rect.x)
+        self.y = float(self.rect.y)
 
         # 移动标志
         self.moving_right = False
         self.moving_left = False
+        self.moving_up = False
+        self.moving_down = False
 
         # 移动速度
         self.moving_speed = self.settings.ship_speed
@@ -32,8 +38,15 @@ class Ship:
             self.x += self.moving_speed
         if self.moving_left and self.rect.left > 0:
             self.x -= self.moving_speed
+        # rect.top上边沿的y坐标大于0，说明飞船还可以向上移动
+        if self.moving_up and self.rect.top > 0:
+            self.y -= self.moving_speed
+        # rect.bottom下边沿的y坐标小于屏幕高度，说明飞船还可以向下移动
+        if self.moving_down and self.rect.bottom < self.screen_rect.bottom:
+            self.y += self.moving_speed
 
         self.rect.x = self.x
+        self.rect.y = self.y
 
     def blitme(self):
         """在指定位置绘制飞船"""
