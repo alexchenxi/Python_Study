@@ -2,8 +2,6 @@ import sys
 import pygame
 
 from settings import Settings
-from ship import Ship
-from bullet import Bullet
 from alien import Alien
 
 
@@ -25,8 +23,8 @@ class AlienInvasion:
         self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("外星入侵")
 
-        self.ship = Ship(self)
-        self.bullets = pygame.sprite.Group()
+        # self.ship = Ship(self)
+        # self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
 
         self._create_fleet()
@@ -41,8 +39,8 @@ class AlienInvasion:
         while True:
             # 处理游戏事件
             self._check_events()
-            self.ship.update()
-            self._update_bullets()
+            # self.ship.update()
+            # self._update_bullets()
             self._update_screen()
             self.clock.tick(60)
 
@@ -53,78 +51,36 @@ class AlienInvasion:
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
-            elif event.type == pygame.KEYUP:
-                self._check_keyup_events(event)
 
     def _check_keydown_events(self, event):
         """响应按键"""
-        if event.key == pygame.K_RIGHT:
-            self.ship.moving_right = True
-        elif event.key == pygame.K_LEFT:
-            self.ship.moving_left = True
-        elif event.key == pygame.K_q:
+        if event.key == pygame.K_q:
             sys.exit()
-        elif event.key == pygame.K_SPACE:
-            self._fire_bullet()
-
-    def _check_keyup_events(self, event):
-        """响应松开"""
-        if event.key == pygame.K_RIGHT:
-            self.ship.moving_right = False
-        elif event.key == pygame.K_LEFT:
-            self.ship.moving_left = False
-        elif event.key == pygame.K_SPACE:
-            self._fire_bullet()
-
-    def _fire_bullet(self):
-        """创建一颗子弹，并将其加入编组bullets中"""
-        if len(self.bullets) < self.settings.bullets_allowed:
-            new_bullet = Bullet(self)
-            self.bullets.add(new_bullet)
 
     def _create_fleet(self):
         """创建外星人群"""
         # 创建一个外星人，并计算一行可容纳多少个外星人
         # 外星人间距为外星人宽度
         alien = Alien(self)
-        alien_width, alien_height = alien.rect.size
+        alien_width = alien.rect.width
+        current_x = alien_width
+        while current_x < (self.settings.screen_width - 2 * alien_width):
+            self._create_alien(current_x)
+            current_x += 2 * alien_width
 
-        current_x, current_y = alien_width, alien_height
-        while current_y < (self.settings.screen_height - 3 * alien_height):
-            while current_x < (self.settings.screen_width - 2 * alien_width):
-                self._create_alien(current_x, current_y)
-                current_x += 2 * alien_width
-
-            # 一行结束后，将x坐标重新置为外星人宽度，y坐标加外星人高度
-            current_x = alien_width
-            current_y += 2 * alien_height
-
-    def _create_alien(self, x_position, y_position):
+    def _create_alien(self, x_position):
         """创建一个外星人并将其加入当前行"""
         new_alien = Alien(self)
         new_alien.x = x_position
         new_alien.rect.x = x_position
-        new_alien.rect.y = y_position
         self.aliens.add(new_alien)
 
     def _update_screen(self):
         """更新屏幕上的图像，并切换到新屏幕"""
         self.screen.fill(self.settings.bg_color)
-        for bullet in self.bullets.sprites():  # 获取编组中的所有元素
-            bullet.draw_bullet()
-        # 绘制飞船图像
-        self.ship.blitme()
         self.aliens.draw(self.screen)
 
         pygame.display.flip()
-
-    def _update_bullets(self):
-        self.bullets.update()
-
-        # 删除已消失的子弹
-        for bullet in self.bullets.copy():
-            if bullet.rect.bottom <= 0:
-                self.bullets.remove(bullet)
 
 
 if __name__ == "__main__":
