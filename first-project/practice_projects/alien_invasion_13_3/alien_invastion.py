@@ -16,8 +16,6 @@ class AlienInvasion:
         self.clock = pygame.time.Clock()
         self.settings = Settings()
 
-        # 全屏游戏
-        # self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.screen = pygame.display.set_mode(
             (self.settings.screen_width, self.settings.screen_height)
         )
@@ -25,24 +23,14 @@ class AlienInvasion:
         self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("外星入侵")
 
-        self.ship = Ship(self)
-        self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
 
         self._create_fleet()
 
     def run_game(self):
-        """开始游戏的主循环
-
-        该方法包含游戏的事件处理和屏幕更新逻辑，
-        通过无限循环维持游戏运行，处理退出事件，
-        并以60FPS的帧率刷新游戏画面。
-        """
+        """开始游戏的主循环"""
         while True:
-            # 处理游戏事件
             self._check_events()
-            self.ship.update()
-            self._update_bullets()
             self._update_aliens()
             self._update_screen()
             self.clock.tick(60)
@@ -50,6 +38,19 @@ class AlienInvasion:
     def _update_aliens(self):
         self._check_fleet_edges()
         self.aliens.update()
+
+        # 删除到达屏幕底部的外星人
+        screen_rect = self.screen.get_rect()
+        aliens_removed = False  # 记录是否有外星人被移除
+
+        for alien in self.aliens.copy():
+            if alien.rect.bottom >= screen_rect.bottom:
+                self.aliens.remove(alien)
+                aliens_removed = True
+
+        # 如果有外星人被移除，在屏幕顶部创建新的一行外星人
+        if aliens_removed:
+            self._create_alien_row(-64)  # -64是为了让外星人从屏幕顶部外进入
 
     def _check_fleet_edges(self):
         """有外星人到达边缘时采取相应的措施"""
@@ -102,8 +103,6 @@ class AlienInvasion:
 
     def _create_fleet(self):
         """创建外星人群"""
-        # 创建一个外星人，并计算一行可容纳多少个外星人
-        # 外星人间距为外星人宽度
         alien = Alien(self)
         alien_width, alien_height = alien.rect.size
 
@@ -113,7 +112,6 @@ class AlienInvasion:
                 self._create_alien(current_x, current_y)
                 current_x += 2 * alien_width
 
-            # 一行结束后，将x坐标重新置为外星人宽度，y坐标加外星人高度
             current_x = alien_width
             current_y += 2 * alien_height
 
@@ -122,16 +120,13 @@ class AlienInvasion:
         new_alien = Alien(self)
         new_alien.x = x_position
         new_alien.rect.x = x_position
+        new_alien.y = y_position
         new_alien.rect.y = y_position
         self.aliens.add(new_alien)
 
     def _update_screen(self):
         """更新屏幕上的图像，并切换到新屏幕"""
         self.screen.fill(self.settings.bg_color)
-        for bullet in self.bullets.sprites():  # 获取编组中的所有元素
-            bullet.draw_bullet()
-        # 绘制飞船图像
-        self.ship.blitme()
         self.aliens.draw(self.screen)
 
         pygame.display.flip()
@@ -144,8 +139,17 @@ class AlienInvasion:
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
 
+    def _create_alien_row(self, y_position):
+        """在指定的y位置创建一行外星人"""
+        alien = Alien(self)
+        alien_width, _ = alien.rect.size
+
+        current_x = alien_width
+        while current_x < (self.settings.screen_width - 2 * alien_width):
+            self._create_alien(current_x, y_position)
+            current_x += 2 * alien_width
+
 
 if __name__ == "__main__":
-    # 创建游戏实例并运行游戏
     ai = AlienInvasion()
     ai.run_game()
