@@ -1,4 +1,5 @@
 import sys
+import os
 from time import sleep
 import pygame
 
@@ -8,6 +9,7 @@ from ship import Ship
 from bullet import Bullet
 from alien import Alien
 from button import Button
+from score_board import Scoreboard
 
 
 class AlienInvasion:
@@ -35,6 +37,9 @@ class AlienInvasion:
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
 
+        # 定义最高分文件路径（保存在当前文件夹中）
+        self.high_score_file = os.path.join(os.path.dirname(__file__), "high_score.txt")
+
         self._create_fleet()
 
         # 游戏开始时处于活动状态
@@ -42,6 +47,16 @@ class AlienInvasion:
 
         # 创建Play按钮
         self.play_button = Button(self, "Play")
+
+        # 创建得分实例
+        self.sb = Scoreboard(self)
+
+        # 从文件中读取最高分
+        try:
+            with open(self.high_score_file, "r") as file:
+                self.stats.high_score = int(file.read().strip())
+        except FileNotFoundError:
+            self.stats.high_score = 0
 
     def run_game(self):
         """开始游戏的主循环
@@ -75,6 +90,7 @@ class AlienInvasion:
         if self.stats.ships_left > 0:
             # 将ships_left减1
             self.stats.ships_left -= 1
+            self.sb.prep_ships()
 
             # 清空外星人列表和子弹列表
             self.aliens.empty()
@@ -128,6 +144,15 @@ class AlienInvasion:
         """在玩家单击Play按钮时开始新游戏"""
         button_clicked = self.play_button.rect.collidepoint(mouse_pos)
         if button_clicked and not self.game_active:
+            # 重置游戏设置
+            self.settings.initialize_dynamic_settings()
+
+            # 重置游戏的统计信息
+            self.stats.reset_stats()
+            self.sb.prep_score()
+            self.sb.prep_level()
+            self.sb.prep_ships()
+
             self._start_game()
 
     def _start_game(self):
@@ -153,6 +178,8 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
         elif event.key == pygame.K_q:
+            # TODO 把当前最高得分保存到文件中
+            self._save_high_score()
             sys.exit()
         elif event.key == pygame.K_SPACE:
             self._fire_bullet()
@@ -209,6 +236,9 @@ class AlienInvasion:
         self.ship.blitme()
         self.aliens.draw(self.screen)
 
+        # 显示得分
+        self.sb.show_score()
+
         # 如果游戏处于非活动状态，则绘制Play按钮
         if not self.game_active:
             self.play_button.draw_button()
@@ -229,11 +259,26 @@ class AlienInvasion:
         """响应子弹和外星人的碰撞"""
         # 删除发生碰撞的子弹和外星人
         collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
+        if collisions:
+            for aliens in collisions.values():
+                self.stats.score += self.settings.alien_points * len(aliens)
+            self.sb.prep_score()
+            self.sb.check_high_score()
 
         if not self.aliens:
             # 删除现有的子弹并创建一群新的外星人
             self.bullets.empty()
             self._create_fleet()
+            self.settings.increase_speed()
+
+            # 提高等级
+            self.stats.level += 1
+            self.sb.prep_level()
+
+    def _save_high_score(self):
+        """将当前最高得分保存到文件中"""
+        with open(self.high_score_file, "w") as file:
+            file.write(str(self.stats.high_score))
 
 
 if __name__ == "__main__":
