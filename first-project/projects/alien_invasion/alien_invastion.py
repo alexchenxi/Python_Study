@@ -149,9 +149,7 @@ class AlienInvasion:
 
             # 重置游戏的统计信息
             self.stats.reset_stats()
-            self.sb.prep_score()
-            self.sb.prep_level()
-            self.sb.prep_ships()
+            self.sb.prep_image()
 
             self._start_game()
 
@@ -182,7 +180,8 @@ class AlienInvasion:
             self._save_high_score()
             sys.exit()
         elif event.key == pygame.K_SPACE:
-            self._fire_bullet()
+            if self.game_active:
+                self._fire_bullet()
         elif event.key == pygame.K_p:
             if not self.game_active:
                 self._start_game()
@@ -194,7 +193,8 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
         elif event.key == pygame.K_SPACE:
-            self._fire_bullet()
+            if self.game_active:
+                self._fire_bullet()
 
     def _fire_bullet(self):
         """创建一颗子弹，并将其加入编组bullets中"""
@@ -269,11 +269,15 @@ class AlienInvasion:
             # 删除现有的子弹并创建一群新的外星人
             self.bullets.empty()
             self._create_fleet()
-            self.settings.increase_speed()
 
             # 提高等级
-            self.stats.level += 1
-            self.sb.prep_level()
+            self.start_new_level()
+
+    def start_new_level(self):
+        """开始新的一关"""
+        self.settings.increase_speed()
+        self.stats.level += 1
+        self.sb.prep_level()
 
     def _save_high_score(self):
         """将当前最高得分保存到文件中"""
