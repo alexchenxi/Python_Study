@@ -4,7 +4,7 @@ input_values = [1, 2, 3, 4, 5]
 sqaures = [1, 4, 9, 16, 25]
 plt.style.use("seaborn-v0_8")
 
-fig, ax = plt.subplots()
+_, ax = plt.subplots()
 ax.plot(input_values, sqaures, linewidth=3)
 
 # 设置图表标题并给坐标轴加上标签

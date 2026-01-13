@@ -4,7 +4,7 @@ import os
 x_values = range(1, 1001)
 y_values = [x**2 for x in x_values]
 plt.style.use("seaborn-v0_8")
-fig, ax = plt.subplots()
+_, ax = plt.subplots()
 ax.scatter(x_values, y_values, s=10, c=y_values, cmap=plt.cm.YlOrBr)
 
 # 设置图表标题并给坐标轴加上标签
