@@ -35,7 +35,7 @@ def practice_17_2():
     # 处理有关每篇文章的信息
     submission_ids = r.json()
     submission_dicts = []
-    for submission_id in submission_ids[:30]:
+    for submission_id in submission_ids[:10]:
         url = f"https://hacker-news.firebaseio.com/v0/item/{submission_id}.json"
         r = requests.get(url)
         print(f"id: {submission_id}\tstatus: {r.status_code}")
@@ -55,7 +55,10 @@ def practice_17_2():
 
     article_links, comments_nums, hover_texts = [], [], []
     for submission_dict in submission_dicts:
-        article_links.append(submission_dict["hn_link"])
+        article_link = (
+            f"<a href='{submission_dict['hn_link']}'>{submission_dict['title']}</a>"
+        )
+        article_links.append(article_link)
         comments_nums.append(submission_dict["comments"])
         hover_texts.append(f"{submission_dict['title']}")
 
