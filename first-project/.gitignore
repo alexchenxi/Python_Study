@@ -2,3 +2,6 @@
 __pycache__
 *.html
 *.txt
+
+# 取消忽略 projects 文件夹下的所有.html文件（否定匹配）
+!projects/**/*.html
