@@ -12,7 +12,7 @@
 
 
 class Person:
-    # private私有化属性
+    # private私有化属性 __xxx
     __age = 18
 
     def __init__(self, name):
@@ -27,11 +27,11 @@ class Person:
 
     @classmethod
     def minus_age(cls):
+        print("年龄减一")
         cls.__age -= 1
 
     @classmethod
     def get_age(cls):
-        print("年龄减一")
         print(cls.__age)
 
     @staticmethod  # 逻辑上高度归属该类，但不碰类、实例任何状态
@@ -41,9 +41,9 @@ class Person:
 
 # 想要修改age
 # Person.test()
-# Person.get_age()
-# Person.minus_age()
-# Person.get_age()
+Person.get_age()
+Person.minus_age()
+Person.get_age()
 
 # p1 = Person("Bob")
 # p1.hello()
