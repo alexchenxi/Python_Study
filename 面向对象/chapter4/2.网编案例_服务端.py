@@ -26,4 +26,8 @@ accept_socket.send(b"Welcome to visit server!")
 # 接受信息并打印
 data = accept_socket.recv(1024).decode("utf-8")
 print(f"收到来自{client_info}的信息：{data}")
-accept_socket.close()
+# accept_socket.close() # server一般不关闭
+
+# 扩展：设置端口号重用，目的：快速重启服务器（服务器关闭后，立即释放端口）
+# 参数一：当前套接字 参数二：设置端口号服用选项 参数三：对应的值True
+sever_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
