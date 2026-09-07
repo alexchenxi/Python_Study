@@ -17,6 +17,6 @@ print("Connected to server...")
 data = client_socket.recv(1024).decode("utf-8")
 print(data)
 # 给客户端发送信息
-client_socket.send(b"Hello This message is from client side!")
+client_socket.send(b"Hello This message is from client side abc!")
 # 接受信息并打印
 client_socket.close()
