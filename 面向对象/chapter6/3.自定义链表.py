@@ -16,6 +16,10 @@
 """
 
 
+# SingleNode对象，有元素域 item 和 地址域 next两个属性
+# 链表对象，有head属性
+
+
 class SingleNode:
     def __init__(self, item):
         self.item = item  # 元素域
@@ -50,15 +54,89 @@ class SingleLinkedList:
             print(f"数值域:{cur.item}")
             cur = cur.next
 
-    # 5. add
+    # 5. add 链表头部增加节点
+
+    def add(self, item):
+        new_node = SingleNode(item)
+        new_node.next = self.head
+        self.head = new_node
+        print(f'新节点"{item}"添加完毕。。。')
 
     # 6. append
+    def append(self, item):
+        # 创建一个新的节点
+        new_node = SingleNode(item)
+        # 判断链表，如果头节点为空，或者链表的isEmpty属性为True，说明链表没有节点，直接加
+        if self.head is None:
+            self.head = new_node
+        # 如果不为空，则通过循环遍历到最后一个节点它的地址域名为None，则给这个节点的地址域替换成新节点
+        else:
+            cur = self.head
+            while cur.next is not None:
+                cur = cur.next
+            cur.next = new_node
+        print(f"New node {item} has been append")
 
     # 7. insert
+    def insert(self, item, pos):
+        if pos <= 0:
+            self.add(item)
+        elif pos >= self.length():
+            self.append(item)
+        else:
+            cur = self.head
+            count = 0
+            # 只要当前节点的位置<pos-1，就一直循环
+            while count < pos - 1:
+                cur = cur.next
+                count += 1
+            new_node = SingleNode(item)
+            # 设置 新节点的地址域，指向 插入位置前那个节点的的地址域
+            new_node.next = cur.next
+            # 插入节点的上个节点指向新节点
+            cur.next = new_node
+        print(f"新节点 {item} 插入完毕！")
 
     # 8. remove
+    def remove(self, item):
+        # 创建游标（表示当前节点），默认从头开始
+        cur = self.head
+        # 定义变量，记录要删除节点的 前驱节点
+        pre = None
 
-    # 9. search
+        # 遍历
+        while cur is not None:
+            if cur.item == item:
+                if cur == self.head:
+                    # cur.next = None
+                    self.head = cur.next
+
+                else:
+                    # 要删除的节点的前置节点指向当前节点的后续节点
+                    pre.next = cur.next
+
+                cur.next = None  # 可不写
+                print(f'节点 "{item}" 删除成功')
+                return  # 删除成功后，跳出循环，函数结束
+            else:
+                # 游标后移
+                pre = cur
+                cur = cur.next
+        print(f'没有找到该节点"{item}"')
+
+    # 9. search 查找节点是否存在
+    def search(self, item):
+        cur = self.head
+
+        while cur.next is not None:
+            if cur.item == item:
+                print(f'节点 "{item}" 存在！')
+                break
+            else:
+                cur = cur.next
+        # while循环结束，么有break
+        else:
+            print(f'节点 "{item}" 不存在！')
 
 
 if __name__ == "__main__":
@@ -84,5 +162,29 @@ if __name__ == "__main__":
     # 5.测试链表长度
     ll5 = SingleLinkedList(node1)
     print(f"链表ll5长度为{ll5.length()}")
-
+    print("#" * 34)
+    # 6.测试遍历
     ll5.traverse()
+    print("#" * 34)
+    # 7.测试增加节点
+    ll5.add("虚竹")
+    ll5.add("鸠摩智")
+    ll5.traverse()
+    print(ll5.length())
+    print("#" * 34)
+    # 8.测试尾部增加节点
+    ll5.append("萧远山")
+    ll5.traverse()
+    print(ll5.length())
+    print("#" * 34)
+    # 9.测试插入位置
+    ll5.insert("慕容博", 2)
+    ll5.traverse()
+    print("#" * 34)
+    # 10.测试删除
+    ll5.remove("萧远山")
+    ll5.traverse()
+    print("#" * 34)
+    # 11.测试存在
+    ll5.search("慕容复")
+    ll5.search("慕容博")
